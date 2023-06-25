@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+#define NUM_FRAMES 3
+#define NUM_PAGES 8
+int main() {
+    int frames[NUM_FRAMES] = {-1, -1, -1};
+    int page_reference[NUM_PAGES] = {4, 1, 2, 4, 3, 2, 1, 5};
+    int page_faults = 0;
+    int next_frame = 0;
+    int i,j;
+    printf("Page reference sequence: ");
+    for (i = 0; i < NUM_PAGES; i++) {
+        printf("%d ", page_reference[i]);
+    }
+    printf("\n");
+    printf("No of page frames: %d\n", NUM_FRAMES);
+    for (i = 0; i < NUM_PAGES; i++) {
+        int page = page_reference[i];
+        bool page_hit = false;
+        for (j = 0; j < NUM_FRAMES; j++) {
+            if (frames[j] == page) {
+                page_hit = true;
+                break;
+            }
+        }
+        if (!page_hit) {
+            frames[next_frame] = page;
+            next_frame = (next_frame + 1) % NUM_FRAMES;
+            page_faults++;
+        }
+        printf("Frames: ");
+        for (j = 0; j < NUM_FRAMES; j++) {
+            if (frames[j] == -1) {
+                printf("- ");
+            } else {
+                printf("%d ", frames[j]);
+            }
+        }
+        printf("\n");
+    }
+    printf("Number of page faults: %d\n", page_faults);
+    return 0;
+}
