@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct process {
+    char name;
+    int burst_time;
+    int arrival_time;
+    int waiting_time;
+    int turnaround_time;
+};
+void swap(struct process *xp, struct process *yp) {
+    struct process temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+void sort(struct process processes[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (processes[j].burst_time > processes[j + 1].burst_time) {
+                swap(&processes[j], &processes[j + 1]);
+            }
+        }
+    }
+}
+void calculate_waiting_time(struct process processes[], int n) {
+    int i, total_wait_time = 0, previous_burst_time = 0;
+    for (i = 0; i < n; i++) {
+        processes[i].waiting_time = previous_burst_time;
+        total_wait_time += processes[i].waiting_time;
+        previous_burst_time += processes[i].burst_time;
+    }
+    printf("\nProcess\tWaiting Time\n");
+    for (i = 0; i < n; i++) {
+        printf("%c\t\t%d\n", processes[i].name, processes[i].waiting_time);
+    }
+    printf("\nAverage waiting time = %f\n", (float) total_wait_time / n);
+}
+void calculate_turnaround_time(struct process processes[], int n) {
+    int i, total_turnaround_time = 0;
+    for (i = 0; i < n; i++) {
+        processes[i].turnaround_time = processes[i].burst_time + processes[i].waiting_time;
+        total_turnaround_time += processes[i].turnaround_time;
+    }
+    printf("\nProcess\tTurnaround Time\n");
+    for (i = 0; i < n; i++) {
+        printf("%c\t\t%d\n", processes[i].name, processes[i].turnaround_time);
+    }
+    printf("\nAverage turnaround time = %f\n", (float) total_turnaround_time / n);
+}
+int main() {
+    struct process processes[] = {
+            {'P1', 6},
+            {'P2', 8},
+            {'P3', 7},
+            {'P4', 3}
+    };
+    int n = sizeof(processes) / sizeof(processes[0]);
+    sort(processes, n);
+    calculate_waiting_time(processes, n);
+    calculate_turnaround_time(processes, n);
+    return 0;
+}
